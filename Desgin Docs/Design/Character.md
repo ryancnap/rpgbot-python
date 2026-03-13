@@ -9,7 +9,7 @@ Inherent Stats:
 * Luck
 
 Derived Stats (based stat):
-* Attack Damage (Strength + Dexterity + gear)
+* Attack Rating (Strength + Dexterity + gear)
 * Damage Reduction (gear)
 * Spell Damage (Intelligence or Faith depending on spell cast)
 * Maximum Ability Points/Mana (Higher of Intelligence vs Faith + Endurance)
