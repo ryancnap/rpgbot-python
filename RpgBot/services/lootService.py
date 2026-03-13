@@ -12,37 +12,37 @@ class LootService():
     def GenerateLoot(self, lootName:str):
         session = Session(bind=self.db)
         statement = select(LootTable).filter_by(name = lootName)
-        lootObj = None
         try:
-            lootObj = session.scalars(statement).first()
-        except Exception as ex:
-            print(ex)
-        finally:
+            lootObj = session.execute(statement).scalars().first()
             session.close()
 
-        if lootObj is None:
-            print("oops")
-            return None
+            if lootObj is None: 
+                return None
 
-        loot = Loot()
-        loot.Name = lootObj.Name
-        loot.Description = lootObj.Description
-        loot.Type = lootObj.Type
+            loot = Loot()
+            loot.Name = lootObj.name
+            loot.Description = lootObj.description
+            loot.Type = lootObj.type
 
-        effectsDict = json.loads(lootObj.baseEffects)
-        baseEffects = Effect(**effectsDict)
-        loot.Effects.Type = baseEffects.Type
-        loot.Effects.AttackRating = self._applyVariance(baseEffects.AttackRating, lootObj.baseVariance)
-        loot.Effects.DamageReduction = self._applyVariance(baseEffects.DamageReduction, lootObj.baseVariance)
-        loot.Effects.SpellDamage = self._applyVariance(baseEffects.SpellDamage, lootObj.baseVariance)
-        loot.Effects.MaxAP = self._applyVariance(baseEffects.MaxAP, lootObj.baseVariance)
-        loot.Effects.MaxHP = self._applyVariance(baseEffects.MaxHP, lootObj.baseVariance)
-        loot.Effects.Evasion = self._applyVariance(baseEffects.Evasion, lootObj.baseVariance)
-        loot.Effects.Heal = self._applyVariance(baseEffects.Heal, lootObj.baseVariance)
-        loot.Effects.CritChance = self._applyVariance(baseEffects.CritChance, lootObj.baseVariance)
-        loot.Effects.Use = baseEffects.Use
+            effectsDict = lootObj.baseEffects
+            baseEffects = Effect(**effectsDict)
+            loot.Effects.Type = baseEffects.Type
+            loot.Effects.AttackRating = self._applyVariance(baseEffects.AttackRating, lootObj.baseVariance)
+            loot.Effects.DamageReduction = self._applyVariance(baseEffects.DamageReduction, lootObj.baseVariance)
+            loot.Effects.SpellDamage = self._applyVariance(baseEffects.SpellDamage, lootObj.baseVariance)
+            loot.Effects.MaxAP = self._applyVariance(baseEffects.MaxAP, lootObj.baseVariance)
+            loot.Effects.MaxHP = self._applyVariance(baseEffects.MaxHP, lootObj.baseVariance)
+            loot.Effects.Evasion = self._applyVariance(baseEffects.Evasion, lootObj.baseVariance)
+            loot.Effects.Heal = self._applyVariance(baseEffects.Heal, lootObj.baseVariance)
+            loot.Effects.CritChance = self._applyVariance(baseEffects.CritChance, lootObj.baseVariance)
+            loot.Effects.Use = baseEffects.Use
 
-        return loot
+            return loot
+        except Exception as ex:
+            session.close()
+            print(ex)
+
+        
 
     @staticmethod
     def _applyVariance(stat:int, variance: int):

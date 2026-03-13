@@ -17,29 +17,17 @@ class Loot():
         }
 
 class Effect():
-    def __init__(self):
-        self.Type = ""
-        self.AttackRating = 0
-        self.DamageReduction = 0
-        self.Evasion = 0
-        self.Heal = 0
-        self.CritChance = 0
-        self.SpellDamage = 0
-        self.MaxHP = 0
-        self.MaxAP = 0
-        self.Use = []
-
-    def __init__(self, ltype:str, ar:int, dr:int, ev:int, heal:int, cc:int, sd:int, mhp:int, lmap:int, use:str):
-        self.Type = ltype
-        self.AttackRating = ar
-        self.DamageReduction = dr
-        self.Evasion = ev
-        self.Heal = heal
-        self.CritChance = cc
-        self.SpellDamage = sd
-        self.MaxHP = mhp
-        self.MaxAP = lmap
-        self.Use = json.loads(use)
+    def __init__(self, Type:str="", AttackRating:int=0, DamageReduction:int=0, Evasion:int=0, Heal:int=0, CritChance:int=0, SpellDamage:int=0, MaxHP:int=0, MaxAP:int=0, Use:list=[]):
+        self.Type = Type
+        self.AttackRating = AttackRating
+        self.DamageReduction = DamageReduction
+        self.Evasion = Evasion
+        self.Heal = Heal
+        self.CritChance = CritChance
+        self.SpellDamage = SpellDamage
+        self.MaxHP = MaxHP
+        self.MaxAP = MaxAP
+        self.Use = Use
 
     def to_dict(self):
         return {

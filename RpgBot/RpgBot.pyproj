@@ -25,6 +25,7 @@
     <Compile Include="models\character.py" />
     <Compile Include="models\loot.py" />
     <Compile Include="RpgBot.py" />
+    <Compile Include="services\cacheService.py" />
     <Compile Include="services\characterService.py" />
     <Compile Include="services\lootService.py" />
   </ItemGroup>

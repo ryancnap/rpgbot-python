@@ -1,5 +1,6 @@
 from data.dataContext import Context
 from services.characterService import CharacterService
+from services.cacheService import SimpleCache
 from services.lootService import LootService
 import json
 
@@ -8,8 +9,9 @@ if __name__ == '__main__':
     
     #Dependency injection and startup services
     db = Context()
-    characterService = CharacterService(db=db)
+    cache = SimpleCache()
     lootService = LootService(db=db)
+    characterService = CharacterService(db=db, cache=cache, lootService=lootService)
 
 
     DEBUG = True
@@ -19,12 +21,16 @@ if __name__ == '__main__':
         match command:
             case "create character":
                 ch = characterService.createNewCharacter(chname="Bob", player="Jake")
-                chJson = json.dumps(ch.to_dict())
+                cachedChar = cache.get("Jake")
+                chJson = json.dumps(cachedChar.to_dict())
                 print(chJson)
             case "generate loot":
                 l = lootService.GenerateLoot("Dagger")
-                lJson = l.to_dict()
-                print(lJson)
+                try:
+                    lJson = l.to_dict()
+                    print(lJson)
+                except Exception as ex:
+                    print(ex)
 
     #end debug loop
 
