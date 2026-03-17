@@ -1,5 +1,7 @@
 import random
 import time
+from data.dataContext import CharacterTable
+from models.loot import Loot
 
 class Character:
     #default constructor
@@ -69,6 +71,44 @@ class Character:
                 "Ability": [item.to_dict() for item in self.Inventory.Ability],
             }
         }
+
+    def FromCharacterTable(self, chTable):
+        self.Name = chTable.charName
+        self.Strength = chTable.strength 
+        self.Dexterity = chTable.dexterity
+        self.Endurance = chTable.endurance
+        self.Intelligence = chTable.intelligence
+        self.Faith = chTable.faith
+        self.Luck = chTable.luck
+        inv = Inventory()
+        inv.Gold = chTable.inventory["Gold"]
+        inv.Equipped = [Loot(**item) for item in chTable.inventory["Equipped"]]
+        inv.Stored = [Loot(**item) for item in chTable.inventory["Stored"]]
+        inv.Ability = [Loot(**item) for item in chTable.inventory["Ability"]]
+        self.Inventory = inv
+        
+        return self
+
+
+    def ToCharacterTable(self, playerName):
+        chTable = CharacterTable(
+            playerName = playerName,
+            charName = self.Name,
+            strength = self.Strength,
+            dexterity = self.Dexterity,
+            endurance = self.Endurance,
+            intelligence = self.Intelligence,
+            faith = self.Faith,
+            luck = self.Luck,
+            inventory = {
+                "Gold": self.Inventory.Gold,
+                "Equipped":[item.to_dict() for item in self.Inventory.Equipped],
+                "Stored": [item.to_dict() for item in self.Inventory.Stored],
+                "Ability": [item.to_dict() for item in self.Inventory.Ability],
+            }
+        )
+
+        return chTable
 
     #Private method. Used to determine stat
     def _rollStat(self):

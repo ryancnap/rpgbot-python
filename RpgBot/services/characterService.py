@@ -17,22 +17,7 @@ class CharacterService():
         ch.Inventory.Equipped = self.lootService.GenerateStartingLoot()
         ch.Inventory.checkInventoryForDuplicates()
 
-        chTable = CharacterTable(
-            playerName = player,
-            charName = ch.Name,
-            strength = ch.Strength,
-            dexterity = ch.Dexterity,
-            endurance = ch.Endurance,
-            intelligence = ch.Intelligence,
-            faith = ch.Faith,
-            luck = ch.Luck,
-            inventory = {
-                "Gold": ch.Inventory.Gold,
-                "Equipped":[item.to_dict() for item in ch.Inventory.Equipped],
-                "Stored": [item.to_dict() for item in ch.Inventory.Stored],
-                "Ability": [item.to_dict() for item in ch.Inventory.Ability],
-            }
-        )
+        chTable = ch.ToCharacterTable(player)
 
         session = Session(bind=self.db)
         statement = select(CharacterTable).filter_by(playerName=player)
@@ -67,22 +52,9 @@ class CharacterService():
 
         if charObj is None:
             print(f"Character for player {player} not found")
-            return Character()
+            return
 
-        ch = Character()
-        ch.Name = charObj.charName
-        ch.Strength = charObj.strength 
-        ch.Dexterity = charObj.dexterity
-        ch.Endurance = charObj.endurance
-        ch.Intelligence = charObj.intelligence
-        ch.Faith = charObj.faith
-        ch.Luck = charObj.luck
-        inv = Inventory()
-        inv.Gold = charObj.inventory["Gold"]
-        inv.Equipped = [Loot(**item) for item in charObj.inventory["Equipped"]]
-        inv.Stored = [Loot(**item) for item in charObj.inventory["Stored"]]
-        inv.Ability = [Loot(**item) for item in charObj.inventory["Ability"]]
-        ch.Inventory = inv
+        ch = Character().FromCharacterTable(charObj)
 
         ch.deriveStats()
         self.cache.set(player, ch)

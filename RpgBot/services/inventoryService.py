@@ -1,3 +1,4 @@
+from models.character import Character
 from services.cacheService import SimpleCache
 from data.dataContext import Context, CharacterTable
 from sqlalchemy.orm import Session
@@ -43,22 +44,7 @@ class InventoryService():
         character.Inventory.checkInventoryForDuplicates()
 
         session = Session(bind = self.db)
-        chTable = CharacterTable(
-            playerName = player,
-            charName = character.Name,
-            strength = character.Strength,
-            dexterity = character.Dexterity,
-            endurance = character.Endurance,
-            intelligence = character.Intelligence,
-            faith = character.Faith,
-            luck = character.Luck,
-            inventory = {
-                "Gold": character.Inventory.Gold,
-                "Equipped":[item.to_dict() for item in character.Inventory.Equipped],
-                "Stored": [item.to_dict() for item in character.Inventory.Stored],
-                "Ability": [item.to_dict() for item in character.Inventory.Ability],
-            }
-        )
+        chTable = character.ToCharacterTable(player)
 
         statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
         session.execute(statement)
@@ -99,22 +85,7 @@ class InventoryService():
         character.Inventory.checkInventoryForDuplicates()
 
         session = Session(bind = self.db)
-        chTable = CharacterTable(
-            playerName = player,
-            charName = character.Name,
-            strength = character.Strength,
-            dexterity = character.Dexterity,
-            endurance = character.Endurance,
-            intelligence = character.Intelligence,
-            faith = character.Faith,
-            luck = character.Luck,
-            inventory = {
-                "Gold": character.Inventory.Gold,
-                "Equipped":[item.to_dict() for item in character.Inventory.Equipped],
-                "Stored": [item.to_dict() for item in character.Inventory.Stored],
-                "Ability": [item.to_dict() for item in character.Inventory.Ability],
-            }
-        )
+        chTable = character.ToCharacterTable(player)
 
         statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
         session.execute(statement)
@@ -127,7 +98,7 @@ class InventoryService():
         return
 
     async def DiscardItem(self, player:str, itemName:str):
-        character = self.cache.get(player)
+        character = self.cache.get(player) or Character()
 
         itemToDrop = list(filter(lambda i: i.Name == itemName, character.Inventory.Stored))
         if len(itemToDrop) == 0:
@@ -139,22 +110,7 @@ class InventoryService():
         character.Inventory.checkInventoryForDuplicates()
 
         session = Session(bind = self.db)
-        chTable = CharacterTable(
-            playerName = player,
-            charName = character.Name,
-            strength = character.Strength,
-            dexterity = character.Dexterity,
-            endurance = character.Endurance,
-            intelligence = character.Intelligence,
-            faith = character.Faith,
-            luck = character.Luck,
-            inventory = {
-                "Gold": character.Inventory.Gold,
-                "Equipped":[item.to_dict() for item in character.Inventory.Equipped],
-                "Stored": [item.to_dict() for item in character.Inventory.Stored],
-                "Ability": [item.to_dict() for item in character.Inventory.Ability],
-            }
-        )
+        chTable = character.ToCharacterTable(player)
 
         statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
         session.execute(statement)
@@ -180,41 +136,11 @@ class InventoryService():
 
         session = Session(bind = self.db)
         try:
-            chTable = CharacterTable(
-                playerName = player,
-                charName = ch.Name,
-                strength = ch.Strength,
-                dexterity = ch.Dexterity,
-                endurance = ch.Endurance,
-                intelligence = ch.Intelligence,
-                faith = ch.Faith,
-                luck = ch.Luck,
-                inventory = {
-                    "Gold": ch.Inventory.Gold,
-                    "Equipped":[item.to_dict() for item in ch.Inventory.Equipped],
-                    "Stored": [item.to_dict() for item in ch.Inventory.Stored],
-                    "Ability": [item.to_dict() for item in ch.Inventory.Ability],
-                }
-            )
+            chTable = ch.ToCharacterTable(player)
             statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
             session.execute(statement)
 
-            targetTable = CharacterTable(
-                playerName = targetPlayer,
-                charName = target.Name,
-                strength = target.Strength,
-                dexterity = target.Dexterity,
-                endurance = target.Endurance,
-                intelligence = target.Intelligence,
-                faith = target.Faith,
-                luck = target.Luck,
-                inventory = {
-                    "Gold": target.Inventory.Gold,
-                    "Equipped":[item.to_dict() for item in target.Inventory.Equipped],
-                    "Stored": [item.to_dict() for item in target.Inventory.Stored],
-                    "Ability": [item.to_dict() for item in target.Inventory.Ability],
-                }
-            )
+            targetTable = target.ToCharacterTable(targetPlayer)
             statement = update(CharacterTable).where(CharacterTable.playerName == targetPlayer).values(inventory = targetTable.inventory)
             session.execute(statement)
 
@@ -247,41 +173,11 @@ class InventoryService():
 
         session = Session(bind = self.db)
         try:
-            chTable = CharacterTable(
-                playerName = player,
-                charName = ch.Name,
-                strength = ch.Strength,
-                dexterity = ch.Dexterity,
-                endurance = ch.Endurance,
-                intelligence = ch.Intelligence,
-                faith = ch.Faith,
-                luck = ch.Luck,
-                inventory = {
-                    "Gold": ch.Inventory.Gold,
-                    "Equipped":[item.to_dict() for item in ch.Inventory.Equipped],
-                    "Stored": [item.to_dict() for item in ch.Inventory.Stored],
-                    "Ability": [item.to_dict() for item in ch.Inventory.Ability],
-                }
-            )
+            chTable = ch.ToCharacterTable(player)
             statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
             session.execute(statement)
 
-            targetTable = CharacterTable(
-                playerName = targetPlayer,
-                charName = target.Name,
-                strength = target.Strength,
-                dexterity = target.Dexterity,
-                endurance = target.Endurance,
-                intelligence = target.Intelligence,
-                faith = target.Faith,
-                luck = target.Luck,
-                inventory = {
-                    "Gold": target.Inventory.Gold,
-                    "Equipped":[item.to_dict() for item in target.Inventory.Equipped],
-                    "Stored": [item.to_dict() for item in target.Inventory.Stored],
-                    "Ability": [item.to_dict() for item in target.Inventory.Ability],
-                }
-            )
+            targetTable = target.ToCharacterTable(player)
             statement = update(CharacterTable).where(CharacterTable.playerName == targetPlayer).values(inventory = targetTable.inventory)
             session.execute(statement)
 
@@ -311,22 +207,7 @@ class InventoryService():
         character.Inventory.checkInventoryForDuplicates()
 
         session = Session(bind = self.db)
-        chTable = CharacterTable(
-            playerName = player,
-            charName = character.Name,
-            strength = character.Strength,
-            dexterity = character.Dexterity,
-            endurance = character.Endurance,
-            intelligence = character.Intelligence,
-            faith = character.Faith,
-            luck = character.Luck,
-            inventory = {
-                "Gold": character.Inventory.Gold,
-                "Equipped":[item.to_dict() for item in character.Inventory.Equipped],
-                "Stored": [item.to_dict() for item in character.Inventory.Stored],
-                "Ability": [item.to_dict() for item in character.Inventory.Ability],
-            }
-        )
+        chTable = character.ToCharacterTable(player)
 
         statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
         session.execute(statement)
