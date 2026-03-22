@@ -40,7 +40,7 @@ class CharacterCog(commands.Cog):
         
         return
 
-    @commands.command(brief="Show simple character sheet")
+    @commands.command(brief="Show simple character sheet", aliases=["Describe"])
     async def DescribeCharacter(self, ctx):
         player = ctx.author.name
         await self.characterService.GetSetChar(player)

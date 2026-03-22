@@ -25,6 +25,15 @@ class InventoryService():
             "Stored": [item.Name for item in inv.Stored]
         }
 
+    async def DescribeItem(self, item:Loot):
+        itemdict = item.to_dict()
+        effects = item.Effects.to_dict()
+        for key, value in item.Effects.to_dict().items():
+            if value == 0 or value == [] or value == "":
+                del effects[key]
+
+        itemdict["Effects"] = effects
+        return itemdict
 
     async def UnequipItem(self, player:str, itemName:str):
         character = self.cache.get(player)
@@ -121,6 +130,40 @@ class InventoryService():
 
         return
     
+    async def SwapItem(self, player:str, itemName:str):
+        character = self.cache.get(player) or Character()
+        
+        itemToEquip = list(filter(lambda i: i.Name == itemName, character.Inventory.Stored))
+        if len(itemToEquip) == 0:
+            return {
+                "Error": "No item of that name in inventory"    
+            }
+
+        itemType = itemToEquip[0].Type
+        if itemType == "Consumable":
+            return {
+                "Error": "Consumable items cannot be equipped"    
+            }
+
+        itemToUnequip = list(filter(lambda i: i.Type == itemType, character.Inventory.Equipped))
+        if len(itemToUnequip) > 0:
+            character.Inventory.Stored.append(itemToUnequip[0])
+            character.Inventory.Equipped = [item for item in character.Inventory.Equipped if item.Name != itemToUnequip[0].Name]
+
+        character.Inventory.Equipped.append(itemToEquip[0])
+        character.Inventory.checkInventoryForDuplicates()
+
+        session = Session(bind = self.db)
+        chTable = character.ToCharacterTable(player)
+
+        statement = update(CharacterTable).where(CharacterTable.playerName == player).values(inventory = chTable.inventory)
+        session.execute(statement)
+        session.commit()
+        session.close()
+
+        character.deriveStats()
+        self.cache.set(player, character)
+
     async def GiveGold(self, player:str, targetPlayer:str, amount:int):
         ch = self.cache.get(player)
         target = self.cache.get(targetPlayer)

@@ -59,6 +59,16 @@ class AbilityService():
             "Ability": [item.Name for item in inv.Ability]
         }
 
+    async def DescribeAbility(self, ability:Ability):
+        abilityDict = ability.to_dict()
+        effects = ability.Effects.to_dict()
+        for key, value in ability.Effects.to_dict().items():
+            if value == 0 or value == [] or value == "":
+                del effects[key]
+
+        abilityDict["Effects"] = effects
+        return abilityDict
+
     async def LearnAbility(self, player:str, ability:Ability):
         character = self.cache.get(player) or Character()
 

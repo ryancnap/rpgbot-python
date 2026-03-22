@@ -134,7 +134,11 @@ class CombatService():
 
         #damage target
         if inflictAmount > 0:
-            summary.append(f"{ch.Name} {critStr}inflicted {damageTaken} {effectType} damage to {targetCh.Name}")
+            evadeChance = random.randint(1,100)
+            if targetCh.Evasion >= evadeChance:
+                summary.append(f"{ch.Name} attacked {targetCh.Name} with {ability.Name}, but missed!")
+            else:
+                summary.append(f"{ch.Name} {critStr}inflicted {damageTaken} {effectType} damage to {targetCh.Name}")
 
         #target retaliates
         if inflictAmount > 0 or len(ability.Effects.Debuff) > 0:

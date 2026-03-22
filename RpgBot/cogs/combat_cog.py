@@ -26,7 +26,11 @@ class CombatCog(commands.Cog):
 
         player = ctx.author.name
         await self.characterService.GetSetChar(player)
-        await self.characterService.GetSetChar(target.name)
+        targetCh = self.cache.get(target.name)
+        if targetCh is None:
+            await ctx.reply(f"{target.mention} is not online")
+            await ctx.reply(f"{ctx.author.mention} wants to duel {target.mention}")
+            return
 
         response = await self.combatService.DoPvPCombat(player, target.name)
         await ctx.reply(json.dumps(response, indent=4))
@@ -41,7 +45,7 @@ class CombatCog(commands.Cog):
             return
 
         if len(abilityName.strip()) == 0:
-            await ctx.reply("No target specified")
+            await ctx.reply("No ability specified")
             return
 
         player = ctx.author.name
@@ -49,7 +53,11 @@ class CombatCog(commands.Cog):
 
         if target == "self":
             target = ctx.author
-        await self.characterService.GetSetChar(target.name)
+        targetCh = self.cache.get(target.name)
+        if targetCh is None:
+            await ctx.reply(f"{target.mention} is not online")
+            await ctx.reply(f"{ctx.author.mention} wants to duel {target.mention}")
+            return
 
         response = await self.combatService.UseAbilityPvP(player, target.name, abilityName)
         await ctx.reply(json.dumps(response, indent=4))

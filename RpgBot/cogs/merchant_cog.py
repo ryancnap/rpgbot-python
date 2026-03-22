@@ -2,25 +2,27 @@ from discord.ext import tasks, commands
 from services import merchantService
 from services.cacheService import SimpleCache
 from services.characterService import CharacterService
+from services.inventoryService import InventoryService
 from services.merchantService import MerchantService
 import json
 class MerchantCog(commands.Cog):
-    def __init__(self, bot:commands.Bot, cache:SimpleCache, merchantService:MerchantService, characterService:CharacterService):
+    def __init__(self, bot:commands.Bot, cache:SimpleCache, merchantService:MerchantService, characterService:CharacterService, inventoryService:InventoryService):
         self.bot = bot
         self.cache = cache
         self.merchantService = merchantService
         self.characterService = characterService
+        self.inventoryService = inventoryService
 
         return
 
-    @commands.command(breif="Show Merchant inventory")
+    @commands.command(breif="Show Merchant inventory", aliases=["Merchant"])
     async def ShowMerchant(self, ctx):
         await self.merchantService.GetSetMerchant()
 
         retval = await self.merchantService.ShowMerchantInventory()
         await ctx.reply(json.dumps(retval, indent=4))
 
-    @commands.command(brief="Describe item in merchant inventory")
+    @commands.command(brief="Describe item in merchant inventory", aliases=["DescM"])
     async def DescribeMerchant(self, ctx, *, itemName:str=""):
         if len(itemName.strip()) == 0:
             await ctx.reply("No item name given to describe")
@@ -29,15 +31,15 @@ class MerchantCog(commands.Cog):
         merchant = self.cache.get("Wandering Merchant")
         itemList = list(filter(lambda i: i.Item.Name == itemName, merchant.Inventory.Wares))
         if len(itemList) == 0:
-            await ctx.reply("No item of that name in inventory")
+            await ctx.reply(f"No item named {itemName} in merchant inventory")
             return
 
-        item = itemList[0].Item.to_dict()
+        item = await self.inventoryService.DescribeItem(itemList[0].Item)
         await ctx.reply(json.dumps(item, indent=4))
         return
 
     @commands.command(brief="Tells you the value of an item and how much the merchant will buy it for")
-    async def AppraiseItem(self, ctx, *, itemName:str):
+    async def Appraise(self, ctx, *, itemName:str):
         if len(itemName.strip()) == 0:
             await ctx.reply("No item name given to appraise")
             return
@@ -55,7 +57,7 @@ class MerchantCog(commands.Cog):
         await ctx.reply(f"Your item is worth {itemVal} Gold. The merchant will buy it for {sellVal} Gold")
 
     @commands.command(brief="Buy item from merchant")
-    async def BuyItem(self, ctx, *, itemName:str):
+    async def Buy(self, ctx, *, itemName:str):
         if len(itemName.strip()) == 0:
             await ctx.reply("No item name given to buy")
             return
@@ -71,7 +73,7 @@ class MerchantCog(commands.Cog):
         await ctx.reply(f"You bought {itemName} from the shop")
 
     @commands.command(brief="Sell item to merchant from stored inventory")
-    async def SellItem(self, ctx, *, itemName:str):
+    async def Sell(self, ctx, *, itemName:str):
         if len(itemName.strip()) == 0:
             await ctx.reply("No item name given to sell")
             return

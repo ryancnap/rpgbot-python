@@ -12,7 +12,7 @@ class AbilityCog(commands.Cog):
         self.abilityService = abilityService
         return
 
-    @commands.command(brief="Show Ability List")
+    @commands.command(brief="Show Ability List",aliases=["ShowAb"])
     async def ShowAbilities(self, ctx):
         player = ctx.author.name
         await self.characterService.GetSetChar(player)
@@ -20,7 +20,7 @@ class AbilityCog(commands.Cog):
         await ctx.reply(json.dumps(retval, indent=4))
         return
 
-    @commands.command(brief="Describe an ability")
+    @commands.command(brief="Describe an ability", aliases=["DescAb"])
     async def DescribeAbility(self, ctx, *, abilityName:str = ""):
         if len(abilityName.strip()) == 0:
             await ctx.reply("No ability given to describe")
@@ -34,11 +34,11 @@ class AbilityCog(commands.Cog):
             await ctx.reply("No ability of that name in abilities")
             return
 
-        item = itemList[0].to_dict()
+        item = await self.abilityService.DescribeAbility(itemList[0])
         await ctx.reply(json.dumps(item, indent=4))
         return 
 
-    @commands.command(brief="Change name of ability")
+    @commands.command(brief="Change name of ability",aliases=["RenameAb"])
     async def RenameAbility(self, ctx, abilityName:str="", newAbilityName:str=""):
         if len(abilityName.strip()) == 0:
             await ctx.reply("No ability name given")
