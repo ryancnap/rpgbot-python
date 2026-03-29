@@ -32,8 +32,11 @@ class Character:
         self.MaxAbilities = 0
         self.CritChance = 0
 
+        self.Weakness = []
+        self.Resistance = []
         #inventory
         self.Inventory = Inventory()
+        self.Buffs = Buffs()
 
     #Make a new character
     def new(self, name:str):
@@ -159,6 +162,15 @@ class Character:
             self.MaxAP += effects.MaxAP
             self.Evasion += effects.Evasion
             self.CritChance += effects.CritChance
+        
+        #apply buffs
+        self.AttackRating = 0 if self.AttackRating + self.Buffs.AttackRating < 0 else self.AttackRating + self.Buffs.AttackRating
+        self.DamageReduction = 0 if self.DamageReduction + self.Buffs.DamageReduction < 0 else self.DamageReduction + self.Buffs.DamageReduction
+        self.SpellDamage = 0 if self.SpellDamage + self.Buffs.SpellDamage < 0 else self.SpellDamage + self.Buffs.SpellDamage
+        self.MaxHP = 0 if self.MaxHP + self.Buffs.MaxHP < 0 else self.MaxHP + self.Buffs.MaxHP
+        self.MaxAP = 0 if self.MaxAP + self.Buffs.MaxAP < 0 else self.MaxAP + self.Buffs.MaxAP
+        self.Evasion = 0 if self.Evasion + self.Buffs.Evasion < 0 else self.Evasion + self.Buffs.Evasion
+        self.CritChance = 0 if self.CritChance + self.Buffs.CritChance < 0 else self.CritChance + self.Buffs.CritChance
 
         if self.CurrentAP > self.MaxAP:
             self.CurrentAP = self.MaxAP
@@ -230,3 +242,13 @@ class Inventory():
                         dupCount += 1
         
         return items
+
+class Buffs():
+    def __init__(self):
+        self.AttackRating = 0
+        self.DamageReduction = 0
+        self.SpellDamage = 0
+        self.MaxHP = 0
+        self.MaxAP = 0
+        self.Evasion = 0
+        self.CritChance = 0

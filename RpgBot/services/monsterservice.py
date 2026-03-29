@@ -525,15 +525,16 @@ class MonsterService:
                             summary.append(f"{monster.Name} lowered {ch.Name}'s {stat} by {debuffAmount}")
                             match stat:
                                 case "AttackRating":
-                                    ch.AttackRating = 0 if ch.AttackRating - debuffAmount < 0 else ch.AttackRating - debuffAmount
+                                    ch.Buffs.AttackRating -= debuffAmount
                                 case "DamageReduction":
-                                    ch.DamageReduction = 0 if ch.DamageReduction - debuffAmount < 0 else ch.DamageReduction - debuffAmount
+                                    ch.Buffs.DamageReduction -= debuffAmount
                                 case "SpellDamage":
-                                    ch.SpellDamage = 0 if ch.SpellDamage - debuffAmount < 0 else ch.SpellDamage - debuffAmount
+                                    ch.Buffs.SpellDamage -= debuffAmount
                                 case "Evasion":
-                                    ch.Evasion = 0 if ch.Evasion - debuffAmount < 0 else ch.Evasion - debuffAmount
+                                    ch.Buffs.Evasion -= debuffAmount
                                 case "CritChance":
-                                    ch.CritChance = 0 if ch.CritChance - debuffAmount < 0 else ch.CritChance - debuffAmount
+                                    ch.Buffs.CritChance -= debuffAmount
+                            ch.deriveStats()
                             self.cache.set(pname, ch)
                         case "Flee":
                             summary.append(f"{monster.Name} fled the dungeon!")

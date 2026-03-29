@@ -101,31 +101,31 @@ class CombatService():
             summary.append(f"{ch.Name} boosted {targetCh.Name}'s {stat} by {boostAmount}")
             match stat:
                 case "AttackRating":
-                    targetCh.AttackRating += boostAmount
+                    targetCh.Buffs.AttackRating += boostAmount
                 case "DamageReduction":
-                    targetCh.DamageReduction += boostAmount
+                    targetCh.Buffs.DamageReduction += boostAmount
                 case "SpellDamage":
-                    targetCh.SpellDamage += boostAmount
+                    targetCh.Buffs.SpellDamage += boostAmount
                 case "Evasion":
-                    targetCh.Evasion += boostAmount
+                    targetCh.Buffs.Evasion += boostAmount
                 case "CritChance":
-                    targetCh.CritChance += boostAmount
-        
+                    targetCh.Buffs.CritChance += boostAmount
+            targetCh.deriveStats()
         #debuff stats
         for stat in ability.Effects.Debuff:
             summary.append(f"{ch.Name} lowered {targetCh.Name}'s {stat} by {debuffAmount}")
             match stat:
                 case "AttackRating":
-                    targetCh.AttackRating = 0 if targetCh.AttackRating - debuffAmount < 0 else targetCh.AttackRating - debuffAmount
+                    targetCh.Buffs.AttackRating -= debuffAmount
                 case "DamageReduction":
-                    targetCh.DamageReduction = 0 if targetCh.DamageReduction - debuffAmount < 0 else targetCh.DamageReduction - debuffAmount
+                    targetCh.Buffs.DamageReduction -= debuffAmount
                 case "SpellDamage":
-                    targetCh.SpellDamage = 0 if targetCh.SpellDamage - debuffAmount < 0 else targetCh.SpellDamage - debuffAmount
+                    targetCh.Buffs.SpellDamage -= debuffAmount
                 case "Evasion":
-                    targetCh.Evasion = 0 if targetCh.Evasion - debuffAmount < 0 else targetCh.Evasion - debuffAmount
+                    targetCh.Buffs.Evasion -= debuffAmount
                 case "CritChance":
-                    targetCh.CritChance = 0 if targetCh.CritChance - debuffAmount < 0 else targetCh.CritChance - debuffAmount
-        
+                    targetCh.Buffs.CritChance -= debuffAmount
+            targetCh.deriveStats()
         #self heal
         selfNewHP = ch.CurrentHP + selfHealAmount - selfInflictAmount
         ch.CurrentHP = selfNewHP if selfNewHP <= ch.MaxHP else ch.MaxHP
