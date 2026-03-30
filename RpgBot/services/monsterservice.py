@@ -446,23 +446,28 @@ class MonsterService:
         ch.Inventory.XP += monsterLoot.XP
 
         if ch.MaxInventory > len(ch.Inventory.Stored):
-            rareDropChance = random.randint(1,100) + ch.Luck
             item = None
+            if len(monsterLoot.RaidLoot) > 0:
+                raidLootDrop = random.choice(monsterLoot.RaidLoot)
+                raiditem = await self.lootService.GenerateLootByName(raidLootDrop)
+                summary.append(f"{ch.Name} also received a legendary {raiditem.Name}!")
+                ch.Inventory.Stored.append(raiditem)
+
+        if ch.MaxInventory > len(ch.Inventory.Stored):
+            rareDropChance = random.randint(1,100) + ch.Luck
             if len(monsterLoot.SpecialLoot) == 0 or rareDropChance <= 95:
                 lootdrop =  random.choice(monsterLoot.Loot)
                 item = await self.lootService.GenerateLootByName(lootdrop)
                 summary.append(f"{ch.Name} also received {item.Name}!")
+                ch.Inventory.Stored.append(item)
             else:
                 specialLootDrop = random.choice(monsterLoot.SpecialLoot)
                 item = await self.lootService.GenerateLootByName(specialLootDrop)
                 summary.append(f"{ch.Name} also received a rare {item.Name}!")
-            if len(monsterLoot.RaidLoot) > 0:
-                raidLootDrop = random.choice(monsterLoot.RaidLoot)
-                item = await self.lootService.GenerateLootByName(raidLootDrop)
-                summary.append(f"{ch.Name} also received a legendary {item.Name}!")
-
-            ch.Inventory.Stored.append(item)
+                ch.Inventory.Stored.append(item)
+                        
             ch.Inventory.checkInventoryForDuplicates()
+            
         self.cache.set(player, ch)
         await self.characterService.SaveCharacter(player, ch)
         return summary
