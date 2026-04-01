@@ -303,6 +303,25 @@ class MonsterService:
                 damageType = "Unarmed"
             else:
                 damageType = weapon[0].Effects.Type
+            
+            match damageType:
+                case "Holy":
+                    attackDmg += ((ch.Faith - 10) // 2)
+                case "Arcane" | "Fire":
+                    attackDmg += ((ch.Intelligence - 10) // 2)
+                case "Slash":
+                    dexMod = ((ch.Dexterity - 10) // 2)
+                    strMod = ((ch.Strength - 10) // 2)
+                    mod = strMod if strMod > dexMod else dexMod
+                    attackDmg += mod
+                case "Pierce":
+                    dexMod = ((ch.Dexterity - 10) // 2)
+                    attackDmg += dexMod
+                case "Bludgeon" | "Thunder":
+                    strMod = ((ch.Strength - 10) // 2)
+                    attackDmg += strMod
+                case _:
+                    pass
 
             if damageType in monster.Weakness:
                 attackDmg *= 2

@@ -185,22 +185,42 @@ class CombatService():
             return f"{ch.Name} attacked {target.Name}, but missed!"
         else:
             attackSummary = f"{ch.Name} attacked {target.Name} "
-            critChance = random.randint(1,100)
             attackDmg = ch.AttackRating
-            if ch.CritChance >= critChance:
-                attackDmg *= 2
-                attackSummary += "critically "
-            damageTot = attackDmg - target.DamageReduction
-            damageReal = damageTot if damageTot > 0 else 0
-            target.CurrentHP -= damageReal
-
+            
             damageType = ""
             weapon = list(filter(lambda i: i.Type == "Hand", ch.Inventory.Equipped))
             if len(weapon) == 0:
                 damageType = "Unarmed"
             else:
                 damageType = weapon[0].Effects.Type
-
+            
+            match damageType:
+                case "Holy":
+                    attackDmg += ((ch.Faith - 10) // 2)
+                case "Arcane" | "Fire":
+                    attackDmg += ((ch.Intelligence - 10) // 2)
+                case "Slash":
+                    dexMod = ((ch.Dexterity - 10) // 2)
+                    strMod = ((ch.Strength - 10) // 2)
+                    mod = strMod if strMod > dexMod else dexMod
+                    attackDmg += mod
+                case "Pierce":
+                    dexMod = ((ch.Dexterity - 10) // 2)
+                    attackDmg += dexMod
+                case "Bludgeon" | "Thunder":
+                    strMod = ((ch.Strength - 10) // 2)
+                    attackDmg += strMod
+                case _:
+                    pass
+            
+            critChance = random.randint(1,100)
+            if ch.CritChance >= critChance:
+                attackDmg *= 2
+                attackSummary += "critically "
+            
+            damageTot = attackDmg - target.DamageReduction
+            damageReal = damageTot if damageTot > 0 else 0
+            target.CurrentHP -= damageReal
             attackSummary += f"for {damageReal} {damageType} damage"
 
             if weapon[0].Effects.Heal > 0:
@@ -209,7 +229,6 @@ class CombatService():
                 attackSummary += f" and healed {ch.Name} for {healAmount} HP"
 
             return attackSummary
-        return
 
     async def _checkForDeath(self, player:str, ch:Character, targetCh:Character):
         charIsDead = False

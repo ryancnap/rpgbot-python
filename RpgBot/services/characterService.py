@@ -209,4 +209,27 @@ class CharacterService():
         session.close()
 
         self.cache.delete(player)
+
+    async def RestCharacter(self, player:str):
+        ch = self.cache.get(player)
+        if ch is None:
+            return {
+                "Error": f"Character for {player} does not exist"
+            }
+        
+        cost = ((ch.MaxHP - ch.CurrentHP) + (ch.MaxAP - ch.CurrentAP)) * 100
+
+        if ch.Inventory.Gold < cost:
+            return {
+                "Error": f"Not enough gold to rest. Resting costs {cost} Gold"
+            }
+
+        ch.Inventory.Gold -= cost
+        ch.calcMaxHPandAP()
+        ch.Buffs = Buffs()
+        self.cache.set(player, ch)
+        await self.SaveCharacter(player, ch)
+        return {
+            "Summary": f"{ch.Name} has rested and restored HP and AP in exchange for {cost} Gold"    
+        }
         

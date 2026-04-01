@@ -3,12 +3,15 @@ from discord.ext import tasks, commands
 from services.cacheService import SimpleCache
 from services.characterService import CharacterService
 import json
+import os
 
 class CharacterCog(commands.Cog):
     def __init__(self, bot:commands.Bot, cache:SimpleCache, characterService:CharacterService):
         self.bot = bot
         self.cache = cache
         self.characterService = characterService
+
+        self.generalChatId = int(os.getenv("GENERAL_CHANNEL_ID"))
         return
 
     @commands.command(brief="Delete exisiting character and create a new one")
@@ -88,7 +91,21 @@ class CharacterCog(commands.Cog):
         await ctx.reply(json.dumps(response, indent=4))
         return
 
+    def isGeneralChannel(self, ctx):
+        return ctx.channel.id == self.generalChatId
+
     #This command lets players rest at the inn to restore their HP and AP to full. It can only be used in the general channel
-    # @commands.command(brief="Rest at the inn to restore HP and AP to full. Can only be used in the general channel", aliases=["Rest"])
-    # async def RestAtInn(self, ctx):
-    #     channel = ctx.channel
+    @commands.command(brief="Rest at the inn to restore HP and AP to full. Can only be used in the general channel", aliases=["Rest"])
+    @commands.cooldown(1, 1800, commands.BucketType.user) # .5 hour cooldown per user
+    @commands.check(isGeneralChannel)
+    async def RestAtInn(self, ctx):        
+        player = ctx.author.name
+        await self.characterService.GetSetChar(player)
+
+        response = await self.characterService.RestCharacter(player)
+        await ctx.reply(json.dumps(response, indent=4))
+
+    @RestAtInn.error
+    async def RestAtInnError(self, ctx, error):
+        if isinstance(error, commands.CheckFailure):
+            await ctx.reply("You can only rest at the inn in the general channel")

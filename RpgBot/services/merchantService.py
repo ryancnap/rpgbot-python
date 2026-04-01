@@ -102,6 +102,14 @@ class MerchantService():
 
         value += len(item.Effects.Use) * 10
 
+        match item.Rarity:
+            case "Uncommon":
+                value *= 5
+            case "Legendary":
+                value *= 15
+            case _:
+                value *= 1
+
         return (value * 10 if value > 1 else 1)
 
     async def BuyItem(self, playerName:str, itemName:str, merchantName:str):
