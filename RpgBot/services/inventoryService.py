@@ -189,9 +189,9 @@ class InventoryService():
             return {
                 "Error": "Insufficient gold to give"    
             }
-        elif amount < 0:
+        elif amount <= 0:
             return {
-                "Error": "Amount of gold can not be negative"
+                "Error": "Can not give less than 1 gold"
             }
 
         ch.Inventory.Gold -= amount
