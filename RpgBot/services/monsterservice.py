@@ -223,7 +223,7 @@ class MonsterService:
                 case "AttackRating" | "SpellDamage":
                     monster.AttackRating = 0 if monster.AttackRating - debuffAmount < 0 else monster.AttackRating - debuffAmount
                 case "DamageReduction":
-                    monster.DamageReduction = 0 if monster.DamageReduction - debuffAmount < 0 else monster.DamageReduction - debuffAmount
+                    monster.DamageReduction = 1 if monster.DamageReduction - debuffAmount < 1 else monster.DamageReduction - debuffAmount
                 case "Evasion":
                     monster.Evasion = 0 if monster.Evasion - debuffAmount < 0 else monster.Evasion - debuffAmount
                 case "CritChance":
@@ -440,7 +440,7 @@ class MonsterService:
                         case "AttackRating" | "SpellDamage":
                             monster.AttackRating = 0 if monster.AttackRating - amount < 0 else monster.AttackRating - amount
                         case "DamageReduction":
-                            monster.DamageReduction = 0 if monster.DamageReduction - amount < 0 else monster.DamageReduction - amount
+                            monster.DamageReduction = 1 if monster.DamageReduction - amount < 1 else monster.DamageReduction - amount
                         case "Evasion":
                             monster.Evasion = 0 if monster.Evasion - amount < 0 else monster.Evasion - amount
                         case "CritChance":
