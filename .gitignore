@@ -1,7 +1,21 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
 /.vs/*
+
 /.vs
+
 /.idea/misc.xml
+
+/.venv
+
+/.venv/*
+
+/.vscode
+
+/.vscode/*
+
+/.env
+
+.env
+
+settings.json
+
+.vscode/settings.json
