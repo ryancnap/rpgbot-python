@@ -271,14 +271,19 @@ class Inventory():
             duplicates = list(filter(lambda i: i.Name == item.Name, items))
             #if more than one item with the same name...
             if len(duplicates) > 1:
-                #loop through inventory and rename the item
                 dupName = item.Name
-                dupCount = 0
+                dupCount = 1
+                # ensure the highest "(int)" in each item.Name duplicate is always assigned to dupCount
+                for dup in items:
+                    if dup.Name.startswith(dupName) and "|" in dup.Name:
+                        splitName = dup.Name.split("|")
+                        dupCount = max(dupCount, int(splitName[-1]) + 1)
+
                 for dup in items:
                     if dup.Name == dupName:
-                        dup.Name += f" ({dupCount})"
+                        dup.Name = f"{splitName[0]} | {dupCount}"
                         dupCount += 1
-        
+
         return items
 
 class Buffs():
