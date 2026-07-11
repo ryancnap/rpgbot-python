@@ -276,12 +276,12 @@ class Inventory():
                 # ensure the highest "(int)" in each item.Name duplicate is always assigned to dupCount
                 for dup in items:
                     if dup.Name.startswith(dupName) and "|" in dup.Name:
-                        appendedQuantity = int(dup.Name.split("|")[-1])
-                        dupCount = max(dupCount, appendedQuantity + 1) 
+                        splitName = dup.Name.split("|")
+                        dupCount = max(dupCount, int(splitName[-1]) + 1)
 
                 for dup in items:
                     if dup.Name == dupName:
-                        dup.Name += f" | {dupCount}"
+                        dup.Name = f"{splitName[0]} | {dupCount}"
                         dupCount += 1
 
         return items
