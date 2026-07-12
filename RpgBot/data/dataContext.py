@@ -1,11 +1,13 @@
 from sqlalchemy import create_engine, Column, Integer, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
+import os
 
 Base = declarative_base()
 
 class Context:
     def __init__(self):
-        self.engine = create_engine("sqlite:///rpgbot.db")
+        connectionString = os.getenv("CONNECTION_STRING")
+        self.engine = create_engine(connectionString)
         self._base = Base
         self._base.metadata.create_all(self.engine)
         print("Tables created")
