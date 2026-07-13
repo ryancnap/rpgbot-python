@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, JSON, TEXT
+from sqlalchemy import create_engine, Column, Integer, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
@@ -16,7 +16,7 @@ class CharacterTable(Base):
     __tablename__ = "characters"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    playerName = Column(String(32), nullable=False, )
+    playerName = Column(String(32), nullable=False)
     charName = Column(String(32), nullable=False)
     strength = Column(Integer, nullable=False)
     dexterity = Column(Integer, nullable=False)
