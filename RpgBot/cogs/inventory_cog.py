@@ -215,10 +215,26 @@ class InventoryCog(commands.Cog):
         return
 
     @commands.command(brief="Use an item in stored inventory on target or self")
-    async def Use(self, ctx, itemName="", target:str="self"):
-        if len(itemName.strip()) == 0:
+    async def Use(self, ctx, *, commandInput:str=""):
+        if len(commandInput.strip()) == 0:
             await ctx.reply("No item name given")
             return
+        # Fix having to encase command in quotes 
+        parts = commandInput.split()
+        itemName = commandInput
+
+        # Self is target by default
+        target =  "self"
+        if len(parts) > 1:
+            # Last item in command string should always be player target, if not defaults to self
+            possibleTargetPlayer = parts[-1]
+            if ctx.guild.get_member_named(possibleTargetPlayer) is not None:
+                target = possibleTargetPlayer
+                itemName = " ".join(parts[:-1])
+            else: 
+                # TODO: this should probably flip flop with the if statement above to fail early 
+                await ctx.reply("Invalid character name")
+                return
 
         channel = ctx.channel.id
         player = ctx.author.name
