@@ -24,3 +24,7 @@ settings.json
 
 *.pyc
 *.db
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/rpgbot-python.iml
+/.idea/vcs.xml
