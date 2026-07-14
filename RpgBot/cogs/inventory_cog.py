@@ -215,7 +215,8 @@ class InventoryCog(commands.Cog):
         return
 
     @commands.command(brief="Use an item in stored inventory on target or self")
-    async def Use(self, ctx, *, commandInput:str=""):
+    async def Use(self, ctx, *commandInput:str):
+        commandInput = " ".join(commandInput)
         if len(commandInput.strip()) == 0:
             await ctx.reply("No item name given")
             return
