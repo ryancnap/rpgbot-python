@@ -215,28 +215,10 @@ class InventoryCog(commands.Cog):
         return
 
     @commands.command(brief="Use an item in stored inventory on target or self")
-    async def Use(self, ctx, *commandInput:str):
-        commandInput = " ".join(commandInput)
-        if len(commandInput.strip()) == 0:
+    async def Use(self, ctx, itemName:str = "", target = "self"):
+        if len(itemName.strip()) == 0:
             await ctx.reply("No item name given")
             return
-        # Fix having to encase command in quotes 
-        parts = commandInput.split()
-        itemName = commandInput
-
-        # Self is target by default
-        target =  "self"
-        if len(parts) > 1:
-            # Last item in command string should always be player target, if not defaults to self
-            possibleTargetPlayer = parts[-1]
-            if ctx.guild.get_member_named(possibleTargetPlayer) is not None:
-                target = possibleTargetPlayer
-                itemName = " ".join(parts[:-1])
-            else: 
-                # the target name has something in it but it isn't a player and isn't self 
-                # TODO: this should probably flip flop with the if statement above to fail early 
-                await ctx.reply("Invalid character name")
-                return
 
         channel = ctx.channel.id
         player = ctx.author.name
@@ -250,6 +232,9 @@ class InventoryCog(commands.Cog):
             await self.characterService.GetSetChar(target.name)
             response = await self.inventoryService.UseItem(player, target.name, itemName)
             await ctx.reply(json.dumps(response, indent=4))
+        elif ctx.guild.get_member_named(target) is None:
+            await ctx.reply("Invalid character name")
+            return
         elif channel in self.dungeonChatList:
             for i in range(len(self.dungeonChatList)):
                 if channel == self.dungeonChatList[i]:
