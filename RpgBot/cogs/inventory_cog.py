@@ -215,7 +215,7 @@ class InventoryCog(commands.Cog):
         return
 
     @commands.command(brief="Use an item in stored inventory on target or self")
-    async def Use(self, ctx, itemName="", target:str="self"):
+    async def Use(self, ctx, itemName:str = "", target:str = "self"):
         if len(itemName.strip()) == 0:
             await ctx.reply("No item name given")
             return
@@ -232,6 +232,9 @@ class InventoryCog(commands.Cog):
             await self.characterService.GetSetChar(target.name)
             response = await self.inventoryService.UseItem(player, target.name, itemName)
             await ctx.reply(json.dumps(response, indent=4))
+        elif ctx.guild.get_member_named(target) is None:
+            await ctx.reply("Invalid character name")
+            return
         elif channel in self.dungeonChatList:
             for i in range(len(self.dungeonChatList)):
                 if channel == self.dungeonChatList[i]:
