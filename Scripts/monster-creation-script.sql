@@ -45,10 +45,64 @@ set @DropTable = JSON_OBJECT(
 DELIMITER //
 CREATE PROCEDURE create_monster()
     BEGIN
-        Declare EXIT HANDLER FOR SQLEXCEPTION
+        DECLARE MonsterName VARCHAR(32);
+        DECLARE MonsterType VARCHAR(10);
+        DECLARE MonsterFloor INT;
+        DECLARE MonsterBaseVariance INT;
+        DECLARE MonsterHP INT;
+        DECLARE MonsterAttackRating INT;
+        DECLARE MonsterDamageReduction INT;
+        DECLARE MonsterEvasion INT;
+        DECLARE MonsterCritChance INT;
+        DECLARE MonsterWeakness JSON;
+        DECLARE MonsterResistance JSON;
+
+        DECLARE DropXP INT;
+        DECLARE DropGold INT;
+        DECLARE DropLoot JSON;
+        DECLARE DropRaidLoot JSON;
+        DECLARE DropSpecialLoot JSON;
+
+        DECLARE AIActionsList JSON;
+        DECLARE AIHPThresholdLower INT;
+        DECLARE AIHPThresholdUpper INT;
+
+        DECLARE MonsterAI JSON;
+
+        DECLARE DropTable JSON;
+
+        DECLARE EXIT HANDLER FOR SQLEXCEPTION
         BEGIN
             ROLLBACK;
         END;
+
+        SET MonsterName = @MonsterName;
+        SET MonsterType = @MonsterType;
+        SET MonsterFloor = @MonsterFloor;
+        SET MonsterBaseVariance = @MonsterBaseVariance;
+        SET MonsterHP = @MonsterHP;
+        SET MonsterAttackRating = @MonsterAttackRating;
+        SET MonsterDamageReduction = @MonsterDamageReduction;
+        SET MonsterEvasion = @MonsterEvasion;
+        SET MonsterCritChance = @MonsterCritChance;
+        SET MonsterWeakness = @MonsterWeakness;
+        SET MonsterResistance = @MonsterResistance;
+
+        SET DropXP = @DropXP;
+        SET DropGold = @DropGold;
+        SET DropLoot = @DropLoot;
+        SET DropRaidLoot = @DropRaidLoot;
+        SET DropSpecialLoot = @DropSpecialLoot;
+
+        SET AIActionsList = @AIActionsList;
+        SET AIHPThresholdLower = @AIHPThresholdLower;
+        SET AIHPThresholdUpper = @AIHPThresholdUpper;
+
+        SET MonsterAI = @MonsterAI;
+
+        SET DropTable = @DropTable;
+
+
         START TRANSACTION;
             INSERT INTO monster (
                                  floor,
@@ -66,19 +120,19 @@ CREATE PROCEDURE create_monster()
                                  dropTable
                                 )
             VALUES              (
-                                @MonsterFloor,
-                                @MonsterType,
-                                @MonsterName,
-                                @MonsterWeakness,
-                                @MonsterResistance,
-                                @MonsterBaseVariance,
-                                @MonsterHP,
-                                @MonsterAttackRating,
-                                @MonsterDamageReduction,
-                                @MonsterEvasion,
-                                @MonsterCritChance,
-                                @MonsterAI,
-                                @DropTable
+                                MonsterFloor,
+                                MonsterType,
+                                MonsterName,
+                                MonsterWeakness,
+                                MonsterResistance,
+                                MonsterBaseVariance,
+                                MonsterHP,
+                                MonsterAttackRating,
+                                MonsterDamageReduction,
+                                MonsterEvasion,
+                                MonsterCritChance,
+                                MonsterAI,
+                                DropTable
                                 );
             COMMIT;
     END//
