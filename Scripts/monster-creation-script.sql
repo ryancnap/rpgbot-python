@@ -22,28 +22,25 @@ set @AIActionsList = JSON_ARRAY('', '');
 set @AIHPThresholdLower = 0;
 set @AIHPThresholdUpper = 0;
 
-set @MonsterAI =
-    JSON_OBJECT(
-        'Actions', JSON_ARRAY(
-            JSON_OBJECT(
-                'Action', @AIActionsList,
-                'HPThresholdLower', @AIHPThresholdLower,
-                'HPThresholdUpper', @AIHPThresholdUpper
-       )
-   )
-
+set @MonsterAI = JSON_OBJECT(
+    'Actions', JSON_ARRAY(
+        JSON_OBJECT(
+            'Action', @AIActionsList,
+            'HPThresholdLower', @AIHPThresholdLower,
+            'HPThresholdUpper', @AIHPThresholdUpper
+        )
+    )
 );
 
 set @DropTable = JSON_OBJECT(
-     'XP', @DropXP,
-     'Gold', @DropGold,
-     'Loot', @DropLoot,
-     'RaidLoot', @DropRaidLoot,
-     'SpecialLoot', @DropSpecialLoot
+    'XP', @DropXP,
+    'Gold', @DropGold,
+    'Loot', @DropLoot,
+    'RaidLoot', @DropRaidLoot,
+    'SpecialLoot', @DropSpecialLoot
 );
 
 DROP PROCEDURE IF EXISTS create_monster;
-
 DELIMITER //
 CREATE PROCEDURE create_monster()
     BEGIN
@@ -108,36 +105,36 @@ CREATE PROCEDURE create_monster()
 
         START TRANSACTION;
             INSERT INTO monster (
-                                 floor,
-                                 type,
-                                 name,
-                                 weakness,
-                                 resistance,
-                                 baseVariance,
-                                 hp,
-                                 attackRating,
-                                 damageReduction,
-                                 evasion,
-                                 critChance,
-                                 ai,
-                                 dropTable
-                                )
-            VALUES              (
-                                MonsterFloor,
-                                MonsterType,
-                                MonsterName,
-                                MonsterWeakness,
-                                MonsterResistance,
-                                MonsterBaseVariance,
-                                MonsterHP,
-                                MonsterAttackRating,
-                                MonsterDamageReduction,
-                                MonsterEvasion,
-                                MonsterCritChance,
-                                MonsterAI,
-                                DropTable
-                                );
-            COMMIT;
+                 floor,
+                 type,
+                 name,
+                 weakness,
+                 resistance,
+                 baseVariance,
+                 hp,
+                 attackRating,
+                 damageReduction,
+                 evasion,
+                 critChance,
+                 ai,
+                 dropTable
+                )
+            VALUES (
+                MonsterFloor,
+                MonsterType,
+                MonsterName,
+                MonsterWeakness,
+                MonsterResistance,
+                MonsterBaseVariance,
+                MonsterHP,
+                MonsterAttackRating,
+                MonsterDamageReduction,
+                MonsterEvasion,
+                MonsterCritChance,
+                MonsterAI,
+                DropTable
+                );
+        COMMIT;
     END//
 DELIMITER ;
 
