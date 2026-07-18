@@ -1,5 +1,5 @@
 
--- Set base monster values
+-- Config: Set base monster values
 set @MonsterName = '';
 set @MonsterType = '';
 set @MonsterFloor = 0;
@@ -12,28 +12,38 @@ set @MonsterCritChance = 0;
 set @MonsterWeakness = JSON_ARRAY('', '');
 set @MonsterResistance = JSON_ARRAY('', '');
 
--- Set drop values
+-- Config: Set drop values
 set @DropXP = 0;
 set @DropGold = 0;
 set @DropLoot = JSON_ARRAY('', '');
 set @DropRaidLoot = JSON_ARRAY('', '');
 set @DropSpecialLoot = JSON_ARRAY('', '');
 
--- Set actions for the MonsterAI column (needs work) might be better to remove this section?
-set @AIActionsList = JSON_ARRAY('', '');
-set @AIHPThresholdLower = 10;
-set @AIHPThresholdUpper = 20;
-
--- Builds MonsterAI column from variables defined above; might be easier to do this manually? \
-set @MonsterAI = JSON_OBJECT(
-    'Actions', JSON_ARRAY(
-        JSON_OBJECT(
-            'Action', JSON_EXTRACT(@AIActionsList, '$'),
-            'HPThresholdLower', @AIHPThresholdLower,
-            'HPThresholdUpper', @AIHPThresholdUpper
-        )
-    )
+-- Do not config: Create temporary table to hold monster AI actions
+DROP TEMPORARY TABLE IF EXISTS monsterAIActions;
+CREATE TEMPORARY TABLE monsterAIActions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    actionList JSON,
+    hpThresholdLower INT,
+    hpThresholdUpper INT
 );
+
+-- Config: Insert AI actions into this table as part of configuration
+INSERT INTO monsterAIActions (actionList, hpThresholdLower, hpThresholdUpper)
+VALUES (JSON_ARRAY(''), 0, 0);
+
+-- Aggregate all data from monsterAIActions into one JSON array of JSON objects, one object for each action/record
+SET @MonsterAIActions = (
+    SELECT JSON_ARRAYAGG(JSON_OBJECT(
+        'Action', JSON_EXTRACT(actionList, '$'),
+        'HPThresholdLower', hpThresholdLower,
+        'HPThresholdUpper', hpThresholdUpper
+    ))
+    FROM monsterAIActions
+    );
+
+-- Create JSON object containing array of all objects/actions/records from @MonsterAIActions
+SET @MonsterAI = JSON_OBJECT('Actions', COALESCE(JSON_EXTRACT(@MonsterAIActions, '$'), JSON_ARRAY()));
 
 -- Builds loot drop column from variables defined above
 set @DropTable = JSON_OBJECT(
@@ -67,10 +77,6 @@ CREATE PROCEDURE create_monster()
         DECLARE DropRaidLoot JSON;
         DECLARE DropSpecialLoot JSON;
 
-        DECLARE AIActionsList JSON;
-        DECLARE AIHPThresholdLower INT;
-        DECLARE AIHPThresholdUpper INT;
-
         DECLARE MonsterAI JSON;
 
         DECLARE DropTable JSON;
@@ -99,12 +105,7 @@ CREATE PROCEDURE create_monster()
         SET DropRaidLoot = @DropRaidLoot;
         SET DropSpecialLoot = @DropSpecialLoot;
 
-        SET AIActionsList = @AIActionsList;
-        SET AIHPThresholdLower = @AIHPThresholdLower;
-        SET AIHPThresholdUpper = @AIHPThresholdUpper;
-
         SET MonsterAI = @MonsterAI;
-
         SET DropTable = @DropTable;
 
 
