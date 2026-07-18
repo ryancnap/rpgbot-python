@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, JSON
+from sqlalchemy import create_engine, Column, Integer, String, JSON, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
@@ -63,3 +63,13 @@ class MonsterTable(Base):
     critChance = Column(Integer, nullable=False)
     ai = Column(JSON, nullable=False)
     dropTable = Column(JSON, nullable=False)
+
+class VaultTable(Base):
+    __tablename__ = 'vault'
+
+    vault_id = Column(Integer, primary_key=True)
+    character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
+    inventory = Column(JSON, nullable=False)
+
+    def __repr__(self):
+        return f"<Vault(vault_id={self.vault_id}, character_id={self.character_id})>"
