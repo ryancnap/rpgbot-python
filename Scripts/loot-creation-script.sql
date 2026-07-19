@@ -17,7 +17,7 @@ SET @AttackRating = 0;
 SET @DamageReduction = 0;
 SET @UseList = JSON_ARRAY('', '');
 
--- Do not config: builds JSON object for `baseEffects` record from Config 2/2 above
+-- End config: build JSON object for `baseEffects` record
 SET @LootBaseEffects = JSON_OBJECT(
                        'Use', JSON_EXTRACT(@UseList, '$'),
                        'Heal', @Heal,
