@@ -66,17 +66,18 @@ class LootService():
             await self.GetSetCache()
             lootPossibilities = deepcopy(self.systemCache.get("Loot"))
 
-        scrollList = list(filter(lambda i: i.name == "Skill Scroll", lootPossibilities))
-
-        abilities = deepcopy(self.systemCache.get("Abilities"))
-        if abilities is None:
+        abilityPossibilities = deepcopy(self.systemCache.get("Abilities"))
+        if abilityPossibilities is None:
             session = Session(bind=self.db)
             statement = select(AbilityTable)
-            abilities = session.execute(statement).scalars().all()
+            abilityPossibilities = session.execute(statement).scalars().all()
             session.close()
 
-            self.systemCache.set("Abilities", abilities)
+            self.systemCache.set("Abilities", abilityPossibilities)
 
+        scrollList = list(filter(lambda i: i.name == "Skill Scroll", lootPossibilities))
+        abilityList = list(filter(lambda i: i.name == abilityName, abilityPossibilities))
+        ability = abilityList[0]
 
 
 
