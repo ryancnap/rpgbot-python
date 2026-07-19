@@ -82,9 +82,9 @@ class LootService():
         ability = abilityList[0]
         scroll = Loot().fromLootTable(lootList[0])
 
-        # Make ability scroll
+        # Only need to change two properties
         scroll.Name = f"{ability.name} Scroll"
-        scroll.Effects.Use = f"Learn {ability.name}"
+        scroll.Effects.Use = [f"Learn {ability.name}"]
 
         return scroll
 
