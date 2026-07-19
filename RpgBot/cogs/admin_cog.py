@@ -1,5 +1,7 @@
 from discord.ext import commands
 import discord
+from numpy.core.multiarray import item
+
 from services.monsterservice import MonsterService
 from models.character import Character
 from services.cacheService import MonsterCache, SimpleCache
@@ -83,7 +85,24 @@ class AdminCog(commands.Cog):
         await self.characterService.SaveCharacter(target.name, ch)
         channel = self.bot.get_channel(self.generalChatID)
         await channel.send(f"The gods have given {target.mention} {itemName}")
-            
+
+    @commands.command(hidden=True)
+    @commands.has_permissions(administrator=True)
+    async def AdminGiveScroll(self, ctx, target:discord.Member, scrollName:str):
+        chResponse = await self.characterService.GetSetChar(target.name)
+        if chResponse["Error"] != "":
+            await ctx.reply(chResponse["Error"])
+            return
+
+        scroll = await self.lootService.GenerateScrollByAbilityName(scrollName)
+        ch = chResponse["Character"] or Character()
+
+        ch.Inventory.Stored.append(scroll)
+        ch.Inventory.checkInventoryForDuplicates()
+        await self.characterService.SaveCharacter(target.name, ch)
+        channel = self.bot.get_channel(self.generalChatID)
+        await channel.send(f"The gods have given {target.mention} {scrollName}")
+
     @commands.command(hidden=True)
     @commands.has_permissions(administrator=True)
     async def AdminDescribeCharacter(self, ctx, *, player:discord.Member):
