@@ -1,6 +1,5 @@
 from discord.ext import commands
 import discord
-from numpy.core.multiarray import item
 
 from services.monsterservice import MonsterService
 from models.character import Character
