@@ -9,19 +9,19 @@ class Vault():
     def to_dict(self):
         return {
             "PlayerName": self.PlayerName,
-            "Inventory": self.Inventory.to_dict
+            "Inventory": self.Inventory
         }
 
     def ToDataTable(self):
         vt = VaultTable(
-            character_id = self.PlayerName,
+            playerName = self.PlayerName,
             inventory = self.Inventory
         )
 
         return vt
 
     def FromDataTable(self, vt:VaultTable):
-        self.PlayerName = vt.character_id
+        self.PlayerName = vt.playerName
         self.Inventory = vt.inventory
 
         return self
