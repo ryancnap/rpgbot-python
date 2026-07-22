@@ -60,10 +60,9 @@ class TasksCog(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def SummonMobMonster(self):
-        await self.SummonMobMons(1)
-        await self.SummonMobMons(2)
-        await self.SummonMobMons(3)
-        await self.SummonMobMons(4)
+        for key in self.dungeonChatsDict.keys():
+            floor = int(key.split("_")[-1])
+            await self.SummonMobMons(floor)
         return
 
     async def SummonMobMons(self, floor:int):
