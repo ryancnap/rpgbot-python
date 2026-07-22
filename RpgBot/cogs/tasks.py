@@ -63,6 +63,7 @@ class TasksCog(commands.Cog):
         await self.SummonMobMons(1)
         await self.SummonMobMons(2)
         await self.SummonMobMons(3)
+        await self.SummonMobMons(4)
         return
 
     async def SummonMobMons(self, floor:int):
