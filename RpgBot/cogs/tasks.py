@@ -80,7 +80,7 @@ class TasksCog(commands.Cog):
     @tasks.loop(hours=1)
     async def SummonRaidMonster(self):
         for i in range(len(self.dungeonChatsDict.keys())):
-            await self.SummonRaidMons(i)
+            await self.SummonRaidMons(i + 1)
         return
 
     async def SummonRaidMons(self, floor:int):
