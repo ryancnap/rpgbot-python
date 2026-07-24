@@ -60,9 +60,8 @@ class TasksCog(commands.Cog):
 
     @tasks.loop(minutes=15)
     async def SummonMobMonster(self):
-        await self.SummonMobMons(1)
-        await self.SummonMobMons(2)
-        await self.SummonMobMons(3)
+        for i in range(len(self.dungeonChatsDict.keys())):
+            await self.SummonMobMons(i + 1)
         return
 
     async def SummonMobMons(self, floor:int):
@@ -80,9 +79,8 @@ class TasksCog(commands.Cog):
 
     @tasks.loop(hours=1)
     async def SummonRaidMonster(self):
-        await self.SummonRaidMons(1)
-        await self.SummonRaidMons(2)
-        await self.SummonRaidMons(3)
+        for i in range(len(self.dungeonChatsDict.keys())):
+            await self.SummonRaidMons(i + 1)
         return
 
     async def SummonRaidMons(self, floor:int):
